@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>K-Means Discipline Classifier</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 60px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #e9f5ff;
+  border-left: 4px solid #007bff;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #333;
+}
+
+.hidden {
+  display: none;
+}  
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Discipline Classifier</h1>
+    <form id="predict-form">
+      <label for="userText">Enter text to classify:</label>
+      <textarea id="userText" name="userText" rows="6" placeholder="Paste your text here..." required></textarea>
+      <button type="submit">Classify</button>
+    </form>
+    <div id="result" class="result hidden"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('predict-form');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resultDiv.classList.add('hidden');
+      resultDiv.textContent = "Classifying…";
+
+      const text = document.getElementById('userText').value.trim();
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await response.json();
+        resultDiv.textContent = `Predicted Discipline: ${data.label}`;
+      } catch (err) {
+        resultDiv.textContent = 'Error: ' + err.message;
+      }
+
+      resultDiv.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
